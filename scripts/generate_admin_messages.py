@@ -36,9 +36,7 @@ def slugify_id(value: str) -> str:
 
 def make_password(label: str) -> str:
     alphabet = string.ascii_letters + string.digits
-    random_part = "".join(secrets.choice(alphabet) for _ in range(10))
-    prefix = re.sub(r"[^A-Za-z0-9]", "", label).upper()[:7] or "MAST"
-    return f"MAST-{prefix}-{random_part}"
+    return "".join(secrets.choice(alphabet) for _ in range(8))
 
 
 def load_rows() -> list[dict[str, str | int]]:
