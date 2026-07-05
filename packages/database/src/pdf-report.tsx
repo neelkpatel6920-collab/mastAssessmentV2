@@ -21,6 +21,7 @@ type PdfReportResponse = {
 
 const gujaratiFontCandidates = [
   process.env.GUJARATI_FONT_PATH,
+  join(process.cwd(), "../../packages/core/fonts/NotoSansGujarati-Regular.ttf"),
   join(process.cwd(), "fonts", "NotoSansGujarati-Regular.ttf"),
   join(process.cwd(), "public", "fonts", "NotoSansGujarati-Regular.ttf"),
   "C:/Windows/Fonts/shruti.ttf"
@@ -28,6 +29,7 @@ const gujaratiFontCandidates = [
 
 const gujaratiBoldFontCandidates = [
   process.env.GUJARATI_BOLD_FONT_PATH,
+  join(process.cwd(), "../../packages/core/fonts/NotoSansGujarati-Bold.ttf"),
   join(process.cwd(), "fonts", "NotoSansGujarati-Bold.ttf"),
   join(process.cwd(), "public", "fonts", "NotoSansGujarati-Bold.ttf"),
   "C:/Windows/Fonts/shrutib.ttf"
