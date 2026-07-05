@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #f7fbff 0%, #edf5ff 52%, #fffaf2 100%);
+  color: #172033;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(185, 204, 230, 0.72);
+  box-shadow: 0 18px 60px rgba(41, 76, 120, 0.1);
+  backdrop-filter: blur(16px);
+}

@@ -1,0 +1,10 @@
+import { NextResponse } from "next/server";
+import { getDashboardData } from "@mast/database";
+import { currentAdmin } from "../../../auth";
+
+export async function GET() {
+  const session = await currentAdmin();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  return NextResponse.json(await getDashboardData(session));
+}
