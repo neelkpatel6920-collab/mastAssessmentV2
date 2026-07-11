@@ -54,6 +54,7 @@ model TestResponse {
   id              String   @id @default(cuid())
   participantName String
   age             Int
+  gender          String   @default("Male")
   zoneId          String
   centerId        String
   center          Center   @relation(fields: [centerId], references: [id])
@@ -65,6 +66,8 @@ model TestResponse {
   primaryType     String
   secondaryType   String
   sequence        String
+  valid           String?
+  secondTestAnswers Json?
   submittedAt     DateTime @default(now())
 
   @@index([centerId])

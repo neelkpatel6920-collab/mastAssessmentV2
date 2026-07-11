@@ -25,11 +25,14 @@ export type TestResponseRecord = MastScore & {
   id: string;
   participantName: string;
   age: number;
+  gender: "Male" | "Female";
   zoneId: string;
   centerId: string;
   answers: BlockAnswer[];
   submittedAt: Date;
   center: { name: string; zone: { name: string } };
+  valid: "Valid" | "Invalid" | null;
+  secondTestAnswers: boolean[] | null;
 };
 
 export type AdminUserRecord = {
@@ -49,6 +52,8 @@ export type ResponseFilters = {
   centerId?: string;
   primaryType?: string;
   secondaryType?: string;
+  gender?: string;
+  valid?: string;
   from?: Date;
   to?: Date;
 };
@@ -144,6 +149,7 @@ function responseFromDoc(id: string, data: FirebaseFirestore.DocumentData): Test
     id,
     participantName: data.participantName,
     age: data.age,
+    gender: (data.gender as "Male" | "Female") ?? "Male",
     zoneId: data.zoneId,
     centerId: data.centerId,
     answers: data.answers ?? [],
@@ -158,7 +164,9 @@ function responseFromDoc(id: string, data: FirebaseFirestore.DocumentData): Test
     center: {
       name: data.centerName,
       zone: { name: data.zoneName }
-    }
+    },
+    valid: (data.valid as "Valid" | "Invalid" | null) ?? null,
+    secondTestAnswers: (data.secondTestAnswers as boolean[] | null) ?? null
   };
 }
 
@@ -196,6 +204,11 @@ function applyFilters(response: TestResponseRecord, filters: ResponseFilters = {
   if (filters.centerId && response.centerId !== filters.centerId) return false;
   if (filters.primaryType && response.primaryType !== filters.primaryType) return false;
   if (filters.secondaryType && response.secondaryType !== filters.secondaryType) return false;
+  if (filters.gender && response.gender !== filters.gender) return false;
+  if (filters.valid) {
+    if (filters.valid === "Valid" && response.valid !== "Valid") return false;
+    if (filters.valid === "Invalid" && response.valid !== "Invalid") return false;
+  }
   if (filters.from && response.submittedAt < filters.from) return false;
   if (filters.to && response.submittedAt > filters.to) return false;
   return true;
@@ -253,6 +266,7 @@ export async function getCenterById(centerId: string): Promise<CenterRecord | nu
 export async function createTestResponse(input: {
   participantName: string;
   age: number;
+  gender: "Male" | "Female";
   center: CenterRecord;
   answers: BlockAnswer[];
   score: MastScore;
@@ -264,11 +278,14 @@ export async function createTestResponse(input: {
     id,
     participantName: input.participantName,
     age: input.age,
+    gender: input.gender,
     zoneId: input.center.zoneId,
     centerId: input.center.id,
     answers: input.answers,
     submittedAt,
     center: { name: input.center.name, zone: { name: input.center.zoneName } },
+    valid: null,
+    secondTestAnswers: null,
     ...input.score
   };
 
@@ -283,6 +300,7 @@ export async function createTestResponse(input: {
   await firestore.collection("testResponses").doc(id).set({
     participantName: record.participantName,
     age: record.age,
+    gender: record.gender,
     zoneId: record.zoneId,
     zoneName: record.center.zone.name,
     centerId: record.centerId,
@@ -295,6 +313,8 @@ export async function createTestResponse(input: {
     primaryType: record.primaryType,
     secondaryType: record.secondaryType,
     sequence: record.sequence,
+    valid: null,
+    secondTestAnswers: null,
     submittedAt: FieldValue.serverTimestamp()
   });
 
@@ -437,4 +457,29 @@ export async function deleteResponsesByIds(session: AdminSession, ids: string[])
   }
 
   return deleted;
+}
+
+export async function updateResponseValidation(
+  id: string,
+  data: { valid: "Valid" | "Invalid"; secondTestAnswers: boolean[] }
+): Promise<void> {
+  const firestore = db();
+
+  if (!firestore) {
+    // Preview mode — update in-memory + file store
+    const persisted = await readPreviewResponses();
+    const existing = persisted.get(id) ?? memoryResponses.get(id);
+    if (existing) {
+      const updated = { ...existing, valid: data.valid, secondTestAnswers: data.secondTestAnswers };
+      memoryResponses.set(id, updated);
+      persisted.set(id, updated);
+      await writePreviewResponses(persisted);
+    }
+    return;
+  }
+
+  await firestore.collection("testResponses").doc(id).update({
+    valid: data.valid,
+    secondTestAnswers: data.secondTestAnswers
+  });
 }

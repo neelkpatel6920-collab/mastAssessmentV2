@@ -23,6 +23,7 @@ export type ResponseRow = {
   id: string;
   participantName: string;
   age: number;
+  gender: string;
   scoreM: number;
   scoreA: number;
   scoreS: number;
@@ -31,6 +32,7 @@ export type ResponseRow = {
   secondaryType: string;
   submittedAt: string; // ISO string (serialized from server)
   center: { name: string; zone: { name: string } };
+  valid: string | null;
 };
 
 type Filters = {
@@ -38,6 +40,8 @@ type Filters = {
   zoneId: string;
   centerId: string;
   primaryType: string;
+  gender: string;
+  valid: string;
   from: string;
   to: string;
 };
@@ -63,6 +67,8 @@ const EMPTY_FILTERS: Filters = {
   zoneId: "",
   centerId: "",
   primaryType: "",
+  gender: "",
+  valid: "",
   from: "",
   to: "",
 };
@@ -112,6 +118,8 @@ export default function ResponsesTable({
       if (f.zoneId) params.set("zoneId", f.zoneId);
       if (f.centerId) params.set("centerId", f.centerId);
       if (f.primaryType) params.set("primaryType", f.primaryType);
+      if (f.gender) params.set("gender", f.gender);
+      if (f.valid) params.set("valid", f.valid);
       if (f.from) params.set("from", new Date(f.from).toISOString());
       if (f.to) {
         const toDate = new Date(f.to);
@@ -249,6 +257,28 @@ export default function ResponsesTable({
             ))}
           </select>
 
+          {/* Gender */}
+          <select
+            value={filters.gender}
+            onChange={(e) => setFilters((f) => ({ ...f, gender: e.target.value }))}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+          >
+            <option value="">All Genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+
+          {/* Valid */}
+          <select
+            value={filters.valid}
+            onChange={(e) => setFilters((f) => ({ ...f, valid: e.target.value }))}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-200"
+          >
+            <option value="">All Results</option>
+            <option value="Valid">Valid</option>
+            <option value="Invalid">Invalid</option>
+          </select>
+
           {/* From date */}
           <div className="relative">
             <label className="absolute -top-2 left-2 bg-white px-1 text-[10px] font-semibold text-slate-400">
@@ -337,6 +367,7 @@ export default function ResponsesTable({
               </th>
               <th className="border-b border-slate-200 p-3">Name</th>
               <th className="border-b border-slate-200 p-3">Age</th>
+              <th className="border-b border-slate-200 p-3">Gender</th>
               <th className="border-b border-slate-200 p-3">Zone</th>
               <th className="border-b border-slate-200 p-3">Center</th>
               <th className="border-b border-slate-200 p-3 text-center">M</th>
@@ -344,6 +375,7 @@ export default function ResponsesTable({
               <th className="border-b border-slate-200 p-3 text-center">S</th>
               <th className="border-b border-slate-200 p-3 text-center">T</th>
               <th className="border-b border-slate-200 p-3">Primary</th>
+              <th className="border-b border-slate-200 p-3">Valid</th>
               <th className="border-b border-slate-200 p-3">Submitted</th>
               <th className="border-b border-slate-200 p-3">Action</th>
             </tr>
@@ -369,6 +401,7 @@ export default function ResponsesTable({
                   </td>
                   <td className="p-3 font-semibold text-ink">{row.participantName}</td>
                   <td className="p-3 text-slate-600">{row.age}</td>
+                  <td className="p-3 text-slate-600">{row.gender}</td>
                   <td className="p-3 text-slate-600">{row.center.zone.name}</td>
                   <td className="p-3 text-slate-600">{row.center.name}</td>
                   <td className="p-3 text-center font-mono text-slate-700">{row.scoreM}</td>
@@ -380,6 +413,19 @@ export default function ResponsesTable({
                       className={`rounded-md px-2 py-1 text-xs font-bold ${TYPE_COLORS[row.primaryType] ?? "bg-slate-100 text-slate-600"}`}
                     >
                       {row.primaryType}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span
+                      className={`rounded-md px-2 py-1 text-xs font-bold ${
+                        row.valid === "Valid"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : row.valid === "Invalid"
+                          ? "bg-rose-50 text-rose-700"
+                          : "bg-slate-100 text-slate-400"
+                      }`}
+                    >
+                      {row.valid ?? "Pending"}
                     </span>
                   </td>
                   <td className="p-3 text-slate-500">

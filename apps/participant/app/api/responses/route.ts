@@ -9,6 +9,7 @@ const optionSchema = z.enum(["A", "B", "C", "D"]);
 const submitSchema = z.object({
   participantName: z.string().trim().min(2).max(100),
   age: z.number().int().min(8).max(120),
+  gender: z.enum(["Male", "Female"]),
   centerId: z.string().min(1),
   answers: z.array(
     z.object({
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
     const response = await createTestResponse({
       participantName: body.participantName,
       age: body.age,
+      gender: body.gender,
       center,
       answers: body.answers,
       score

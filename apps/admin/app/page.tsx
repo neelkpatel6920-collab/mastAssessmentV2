@@ -20,6 +20,7 @@ export default async function AdminDashboard() {
     id: r.id,
     participantName: r.participantName,
     age: r.age,
+    gender: r.gender,
     scoreM: r.scoreM,
     scoreA: r.scoreA,
     scoreS: r.scoreS,
@@ -28,6 +29,7 @@ export default async function AdminDashboard() {
     secondaryType: r.secondaryType,
     submittedAt: r.submittedAt.toISOString(),
     center: r.center,
+    valid: r.valid,
   }));
 
   const sessionInfo = {

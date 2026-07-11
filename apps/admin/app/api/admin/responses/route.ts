@@ -8,6 +8,8 @@ function buildFilters(url: URL): ResponseFilters {
   const centerId = url.searchParams.get("centerId") || undefined;
   const primaryType = url.searchParams.get("primaryType") || undefined;
   const secondaryType = url.searchParams.get("secondaryType") || undefined;
+  const gender = url.searchParams.get("gender") || undefined;
+  const valid = url.searchParams.get("valid") || undefined;
   const from = url.searchParams.get("from");
   const to = url.searchParams.get("to");
 
@@ -17,6 +19,8 @@ function buildFilters(url: URL): ResponseFilters {
     centerId,
     primaryType,
     secondaryType,
+    gender,
+    valid,
     from: from ? new Date(from) : undefined,
     to: to ? new Date(to) : undefined
   };

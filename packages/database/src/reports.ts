@@ -3,6 +3,7 @@ import { MAST_LABELS, type MastType } from "@mast/core";
 type ReportResponse = {
   participantName: string;
   age: number;
+  gender: string;
   submittedAt: Date;
   scoreM: number;
   scoreA: number;
@@ -11,6 +12,7 @@ type ReportResponse = {
   primaryType: string;
   secondaryType: string;
   sequence: string;
+  valid: string | null;
   answers: unknown;
   center: { name: string; zone: { name: string } };
 };
@@ -33,6 +35,7 @@ export function responseToCsvRow(response: ReportResponse): string[] {
     response.submittedAt.toISOString(),
     response.participantName,
     response.age,
+    response.gender,
     response.center.zone.name,
     response.center.name,
     response.scoreM,
@@ -42,6 +45,7 @@ export function responseToCsvRow(response: ReportResponse): string[] {
     response.primaryType,
     response.secondaryType,
     response.sequence,
+    response.valid ?? "",
     ...answerCells
   ].map(String);
 }
@@ -51,6 +55,7 @@ export function csvHeaders(): string[] {
     "Submitted date/time",
     "Participant name",
     "Age",
+    "Gender",
     "Zone",
     "Center",
     "Score M",
@@ -60,6 +65,7 @@ export function csvHeaders(): string[] {
     "Primary type",
     "Secondary type",
     "Sequence",
+    "Valid",
     ...Array.from({ length: 10 }, (_, index) => [`Block ${index + 1} most`, `Block ${index + 1} least`]).flat()
   ];
 }

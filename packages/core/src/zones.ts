@@ -56,5 +56,13 @@ export const CENTER_SEEDS: CenterSeed[] = [
   { no: 49, zone: "Surendranagar", center: "Viramgam" },
   { no: 50, zone: "Vadodara", center: "Vadodara" },
   { no: 51, zone: "Vadodara", center: "Halol" },
-  { no: 52, zone: "Vadodara", center: "Waghodiya" }
+  { no: 52, zone: "Vadodara", center: "Waghodiya" },
+  { no: 53, zone: "SSK Zone", center: "Pujya Santo" },
+  { no: 54, zone: "SSK Zone", center: "Pujya Tyagi Mukto" },
+  { no: 55, zone: "SSK Zone", center: "Male STK" },
+  { no: 56, zone: "SSK Zone", center: "Female STK" },
+  { no: 57, zone: "SSK Zone", center: "Male SSP" },
+  { no: 58, zone: "SSK Zone", center: "Female SSP" },
+  { no: 59, zone: "SSK Zone", center: "Male Chhatralaya" },
+  { no: 60, zone: "SSK Zone", center: "Female Chhatralaya" }
 ];

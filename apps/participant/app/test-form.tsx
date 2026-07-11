@@ -19,6 +19,7 @@ export default function TestForm({ blocks }: { blocks: TestBlock[] }) {
   const [centers, setCenters] = useState<CenterGroup[]>([]);
   const [participantName, setParticipantName] = useState("");
   const [age, setAge] = useState("");
+  const [gender, setGender] = useState<"" | "Male" | "Female">("" );
   const [centerId, setCenterId] = useState("");
   const [answers, setAnswers] = useState<AnswerState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +47,7 @@ export default function TestForm({ blocks }: { blocks: TestBlock[] }) {
     Number(age) >= 8 &&
     Number(age) <= 120 &&
     Boolean(centerId) &&
+    Boolean(gender) &&
     hasReadInstructions;
 
   const isValid =
@@ -76,6 +78,7 @@ export default function TestForm({ blocks }: { blocks: TestBlock[] }) {
         body: JSON.stringify({
           participantName,
           age: Number(age),
+          gender,
           centerId,
           answers: blocks.map((block) => ({
             blockNumber: block.blockNumber,
@@ -147,6 +150,25 @@ export default function TestForm({ blocks }: { blocks: TestBlock[] }) {
               </select>
             </label>
           </div>
+          {/* Gender */}
+          <div className="mt-4">
+            <span className="text-base font-bold text-blue-50">Gender / લિંગ</span>
+            <div className="mt-2 flex gap-6">
+              {(["Male", "Female"] as const).map((option) => (
+                <label key={option} className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value={option}
+                    checked={gender === option}
+                    onChange={() => setGender(option)}
+                    className="h-5 w-5 accent-amber-400"
+                  />
+                  <span className="text-base font-semibold text-white">{option}</span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="mt-5 rounded-2xl border border-blue-100 bg-white/88 p-5 sm:p-6">
@@ -163,7 +185,15 @@ export default function TestForm({ blocks }: { blocks: TestBlock[] }) {
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-black text-emerald-700">
                   ✓
                 </span>
-                <p>{instruction}</p>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: instruction
+                      .replace(/"વધુ"/g, '<strong>"વધુ"</strong>')
+                      .replace(/"ઓછું"/g, '<strong>"ઓછું"</strong>')
+                      .replace(/વધુ/g, '<strong>"વધુ"</strong>')
+                      .replace(/ઓછું/g, '<strong>"ઓછું"</strong>')
+                  }}
+                />
               </div>
             ))}
           </div>
